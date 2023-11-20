@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.Stopwatch.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemIconTint">?attr/colorOnSurface</item>
+        <item name="itemTextColor">?attr/colorOnSurface</item>
+        <item name="itemBackground">@color/nero</item>
+    </style>
+
+    <style name="Widget.Stopwatch.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="titleTextAppearance">@style/TextAppearance.Stopwatch.Toolbar.Title</item>
+        <item name="titleTextColor">?attr/colorAccent</item>
+        <item name="navigationIconTint">?attr/colorAccent</item>
+        <item name="android:background">?android:attr/colorBackground</item>
+    </style>
+</resources>

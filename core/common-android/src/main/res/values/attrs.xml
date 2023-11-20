@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="materialTextButtonStyle" format="reference" />
+    <attr name="materialProgressbarTrackTint" format="color" />
+    <attr name="colorSecondarySurface" format="color" />
+    <attr name="colorOnSecondarySurface" format="color" />
+    <attr name="colorDisabled" format="color" />
+    <attr name="colorOnDisabled" format="color" />
+
+    <!-- Custom icons colors-->
+    <attr name="filledFavoriteIconTint" format="color" />
+
+</resources>

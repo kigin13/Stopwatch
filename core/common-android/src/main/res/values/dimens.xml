@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--Offsets-->
+    <dimen name="offset_min" tools:ignore="UnusedResources">@dimen/_2sdp</dimen>
+    <dimen name="offset_tiny" tools:ignore="UnusedResources">@dimen/_4sdp</dimen>
+    <dimen name="offset_small" tools:ignore="UnusedResources">@dimen/_7sdp</dimen>
+    <dimen name="offset_medium" tools:ignore="UnusedResources">@dimen/_10sdp</dimen>
+    <dimen name="offset_regular" tools:ignore="UnusedResources">@dimen/_14sdp</dimen>
+    <dimen name="offset_average" tools:ignore="UnusedResources">@dimen/_18sdp</dimen>
+    <dimen name="offset_large" tools:ignore="UnusedResources">@dimen/_22sdp</dimen>
+    <dimen name="offset_huge" tools:ignore="UnusedResources">@dimen/_30sdp</dimen>
+    <dimen name="offset_gigantic" tools:ignore="UnusedResources">@dimen/_46sdp</dimen>
+    <dimen name="offset_super_gigantic" tools:ignore="UnusedResources">@dimen/_80sdp</dimen>
+
+    <!--Text Sizes-->
+    <dimen name="text_size_8" tools:ignore="UnusedResources">@dimen/_4ssp</dimen>
+    <dimen name="text_size_10" tools:ignore="UnusedResources">@dimen/_6ssp</dimen>
+    <dimen name="text_size_12" tools:ignore="UnusedResources">@dimen/_8ssp</dimen>
+    <dimen name="text_size_14" tools:ignore="UnusedResources">@dimen/_10ssp</dimen>
+    <dimen name="text_size_16" tools:ignore="UnusedResources">@dimen/_12ssp</dimen>
+    <dimen name="text_size_18" tools:ignore="UnusedResources">@dimen/_14ssp</dimen>
+    <dimen name="text_size_20" tools:ignore="UnusedResources">@dimen/_16ssp</dimen>
+    <dimen name="text_size_22" tools:ignore="UnusedResources">@dimen/_18ssp</dimen>
+    <dimen name="text_size_24" tools:ignore="UnusedResources">@dimen/_20ssp</dimen>
+    <dimen name="text_size_26" tools:ignore="UnusedResources">@dimen/_22ssp</dimen>
+    <dimen name="text_size_28" tools:ignore="UnusedResources">@dimen/_24ssp</dimen>
+    <dimen name="text_size_30" tools:ignore="UnusedResources">@dimen/_26ssp</dimen>
+    <dimen name="text_size_32" tools:ignore="UnusedResources">@dimen/_28ssp</dimen>
+    <dimen name="text_size_64" tools:ignore="UnusedResources">@dimen/_60ssp</dimen>
+
+    <!-- Button -->
+    <dimen name="material_button_corner_radius" tools:ignore="UnusedResources">16dp</dimen>
+
+</resources>

@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+option java_package = "com.timers.stopwatch.core.preference.pb";
+option java_multiple_files = true;
+
+message Settings {
+}

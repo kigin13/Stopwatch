@@ -1,27 +1,30 @@
-package com.newage.feature.pomodoro
+package com.newage.feature.pomodoro.presentation.pomodoroTimer
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.timers.stopwatch.core.common.android.R
+import com.newage.feature.pomodoro.toTimeString
+import com.timers.stopwatch.core.common.android.R.color
 import com.timers.stopwatch.core.common.android.StopwatchFragment
-import com.timers.stopwatch.feature.pomodoro.databinding.FragmentPomodoroRoundsBinding
+import com.timers.stopwatch.feature.pomodoro.R
+import com.timers.stopwatch.feature.pomodoro.databinding.FragmentPomodoroTimerBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
-class PomodoroRoundsFragment :
-    StopwatchFragment<FragmentPomodoroRoundsBinding, PomodoroRoundsViewModel>(
-        FragmentPomodoroRoundsBinding::inflate
+class PomodoroTimerFragment :
+    StopwatchFragment<FragmentPomodoroTimerBinding, PomodoroTimerViewModel>(
+        FragmentPomodoroTimerBinding::inflate
     ) {
 
-    override val viewModel: PomodoroRoundsViewModel by viewModels()
+    override val viewModel: PomodoroTimerViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,12 +37,29 @@ class PomodoroRoundsFragment :
 
     private fun handlingClickEvents() {
         binding.forwardButton.setOnClickListener {
-
+            viewModel.handleForwardBtnClick()
+        }
+        binding.backwardButton.setOnClickListener {
+            viewModel.handleBackwardBtnClick()
         }
     }
 
     private fun launchObserver() {
         lifecycleScope.launch {
+
+            launch {
+                viewModel.pomodoroTomato.collectLatest {
+                    binding.pomodoroView.removeAllViews()
+                    (1..it).forEach { _ ->
+                        val tomato = ImageView(requireContext()).apply {
+                            setPadding(10)
+                            setImageResource(R.drawable.tomato)
+                        }
+                        binding.pomodoroView.addView(tomato)
+                    }
+                }
+            }
+
             launch {
                 viewModel.countDown.collectLatest {
                     val currentCountDownText = "Starting in\n$it"
@@ -53,7 +73,6 @@ class PomodoroRoundsFragment :
 
             launch {
                 viewModel.updatePomodoroProgress.collectLatest {
-                    Log.d("updatePomodoroProgress", "onViewCreated: $it")
                     if (it.percentage == 0F) {
                         return@collectLatest
                     }
@@ -67,9 +86,9 @@ class PomodoroRoundsFragment :
                 viewModel.currentSchedulers.collectLatest {
                     it?.let { schedule ->
                         val colorRes = when (schedule.title) {
-                            "Focus" -> R.color.progress_green
-                            "Short Break" -> R.color.error_text_color
-                            else -> R.color.dodger_blue_2
+                            "Focus" -> color.progress_green
+                            "Short Break" -> color.error_text_color
+                            else -> color.dodger_blue_2
                         }
                         val color = ContextCompat.getColor(requireContext(), colorRes)
                         val subTitleTxt = "Round ${schedule.round}"
@@ -94,7 +113,6 @@ class PomodoroRoundsFragment :
         binding.apply {
             progressBarCircle.progress = progress.roundToInt()
             textViewTime.text = time
-
         }
     }
 }

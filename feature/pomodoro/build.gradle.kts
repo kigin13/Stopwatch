@@ -1,6 +1,7 @@
 plugins {
     id("stopwatch.lint")
     id("stopwatch.android.feature")
+    alias(libs.plugins.org.jetbrains.kotlin.android)
 }
 
 android {

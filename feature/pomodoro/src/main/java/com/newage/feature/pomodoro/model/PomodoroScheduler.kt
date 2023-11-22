@@ -4,8 +4,8 @@ data class PomodoroScheduler(
     val round: Int = 0,
     val title: String,
     val duration: Time,
-    val isCompleted: Boolean,
-    val startTime: Time
+    val status: PomodoroStatus = PomodoroStatus.ADDED,
+    val startTime: Time = Time()
 )
 
 data class Time(

@@ -9,7 +9,7 @@
         android:id="@+id/pomodoro_fragment"
         android:name="com.newage.feature.pomodoro.PomodoroFragment"
         android:label="PomodoroFragment"
-        tools:layout="@layout/fragment_pomodoro" >
+        tools:layout="@layout/fragment_pomodoro">
 
         <action
             android:id="@+id/action_pomodoro_fragment_to_pomodoro_round_fragment"
@@ -18,7 +18,18 @@
 
     <fragment
         android:id="@+id/pomodoro_round_fragment"
-        android:name="com.newage.feature.pomodoro.PomodoroRoundsFragment"
+        android:name="com.newage.feature.pomodoro.presentation.pomodoroTimer.PomodoroRoundsFragment"
         android:label="PomodoroRoundFragment"
-        tools:layout="@layout/fragment_pomodoro_rounds" />
+        tools:layout="@layout/fragment_pomodoro_rounds">
+
+        <action
+            android:id="@+id/action_pomodoro_round_fragment_to_pomodoro_result_fragment"
+            app:destination="@id/pomodoro_result_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pomodoro_result_fragment"
+        android:name="com.newage.feature.pomodoro.presentation.pomodoroResult.PomodoroResultFragment"
+        android:label="PomodoroResultFragment"
+        tools:layout="@layout/fragment_pomodoro_result" />
 </navigation>

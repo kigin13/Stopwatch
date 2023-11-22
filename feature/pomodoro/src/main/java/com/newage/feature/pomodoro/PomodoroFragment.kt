@@ -78,7 +78,7 @@ class PomodoroFragment : StopwatchFragment<FragmentPomodoroBinding, PomodoroView
 
         pomodoroSchedulerAdapter.schedulerCallBack {
             when (it) {
-                is SchedulerItemCallback.OnPomodoroCountChange -> viewModel::pomodoroCountChange
+                is SchedulerItemCallback.OnPomodoroCountChange -> viewModel.pomodoroCountChange(it.position, it.pomodoroCount)
                 is SchedulerItemCallback.OnTimeChange -> viewModel.setNewTime(it.position, it.newTime)
                 is SchedulerItemCallback.OnFocusChanged -> removeFocuses(it.position)
             }

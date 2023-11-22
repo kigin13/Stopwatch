@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.newage.feature.pomodoro.Constants
 import com.newage.feature.pomodoro.toTimeString
 import com.timers.stopwatch.core.common.android.R.color
 import com.timers.stopwatch.core.common.android.StopwatchFragment
@@ -31,8 +32,21 @@ class PomodoroTimerFragment :
 
         binding.countDownTxt.visibility = View.VISIBLE
 
+        modifyViews()
         launchObserver()
         handlingClickEvents()
+    }
+
+    private fun modifyViews() {
+        binding.apply {
+            toolBar.promodoroValueResetBtn.visibility = View.GONE
+            buttonContainer.apply {
+                playPauseIcon.setImageResource(R.drawable.ic_pause)
+                stopFinishIcon.setImageResource(R.drawable.ic_check)
+                playPauseText.text = Constants.PAUSE
+                stopFinishText.text = Constants.FINISH
+            }
+        }
     }
 
     private fun handlingClickEvents() {

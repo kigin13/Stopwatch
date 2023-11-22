@@ -18,9 +18,9 @@
 
     <fragment
         android:id="@+id/pomodoro_round_fragment"
-        android:name="com.newage.feature.pomodoro.presentation.pomodoroTimer.PomodoroRoundsFragment"
+        android:name="com.newage.feature.pomodoro.presentation.pomodoroTimer.PomodoroTimerFragment"
         android:label="PomodoroRoundFragment"
-        tools:layout="@layout/fragment_pomodoro_rounds">
+        tools:layout="@layout/fragment_pomodoro_Timer">
 
         <action
             android:id="@+id/action_pomodoro_round_fragment_to_pomodoro_result_fragment"

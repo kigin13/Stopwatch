@@ -170,7 +170,7 @@ class PomodoroTimerViewModel @Inject constructor(
     private fun pomodoroScheduleCompleted() {
         navigate(
             NavigationCommand.To(
-                PomodoroRoundsFragmentDirections.actionPomodoroRoundFragmentToPomodoroResultFragment()
+                PomodoroTimerFragmentDirections.actionPomodoroRoundFragmentToPomodoroResultFragment()
             )
         )
     }

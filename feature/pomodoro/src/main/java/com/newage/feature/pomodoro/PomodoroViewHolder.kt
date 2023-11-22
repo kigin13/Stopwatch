@@ -158,8 +158,8 @@ class PomodoroViewHolder(
     private fun bindTime(newTime: Pair<Int, Int>) {
         if (newTime.first < 0) return
 
-        val hours = DecimalFormat("00").format(newTime.first)
-        val minutes = DecimalFormat("00").format(newTime.second)
+        val hours = newTime.first.toTimeString()
+        val minutes = newTime.second.toTimeString()
 
         schedulerBinding.apply {
             hoursView.setText(hours)

@@ -3,16 +3,11 @@ package com.newage.feature.pomodoro
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.timers.stopwatch.core.common.android.StopwatchFragment
 import com.timers.stopwatch.core.common.android.navigation.NavigationCommand
 import com.timers.stopwatch.feature.pomodoro.databinding.FragmentPomodoroBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.observeOn
-import kotlinx.coroutines.launch
 
 /**
  * Created by Andriy Deputat email(andriy.deputat@gmail.com) on 01.11.2023.
@@ -69,6 +64,11 @@ class PomodoroFragment : StopwatchFragment<FragmentPomodoroBinding, PomodoroView
 
             btnPlayPause.setOnClickListener {
 
+                handleNavigationCommands(
+                    NavigationCommand.To(
+                        PomodoroFragmentDirections.actionPomodoroFragmentToPomodoroRoundFragment()
+                    )
+                )
             }
 
             btnReset.setOnClickListener {

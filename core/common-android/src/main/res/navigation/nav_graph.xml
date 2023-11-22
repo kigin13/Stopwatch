@@ -9,5 +9,16 @@
         android:id="@+id/pomodoro_fragment"
         android:name="com.newage.feature.pomodoro.PomodoroFragment"
         android:label="PomodoroFragment"
-        tools:layout="@layout/fragment_pomodoro" />
+        tools:layout="@layout/fragment_pomodoro" >
+
+        <action
+            android:id="@+id/action_pomodoro_fragment_to_pomodoro_round_fragment"
+            app:destination="@id/pomodoro_round_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pomodoro_round_fragment"
+        android:name="com.newage.feature.pomodoro.PomodoroRoundsFragment"
+        android:label="PomodoroRoundFragment"
+        tools:layout="@layout/fragment_pomodoro_rounds" />
 </navigation>

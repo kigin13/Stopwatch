@@ -1,7 +1,9 @@
 package com.timers.stopwatch.core.data
 
 import com.timers.stopwatch.core.data.repository.PomodoroRepository
+import com.timers.stopwatch.core.data.repository.RunningSchedulerRepo
 import com.timers.stopwatch.core.data.repositoryImp.PomodoroRepositoryImp
+import com.timers.stopwatch.core.data.repositoryImp.RunningSchedulerRepoImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,5 +17,8 @@ import dagger.hilt.components.SingletonComponent
 interface RepositoryModule {
 
     @Binds
-    fun bindsPomodoroRepository(pomodoroRepositoryImp: PomodoroRepositoryImp) : PomodoroRepository
+    fun bindsPomodoroRepository(pomodoroRepositoryImp: PomodoroRepositoryImp): PomodoroRepository
+
+    @Binds
+    fun bindsRunningScheduleRepository(runningSchedulerRepoImpl: RunningSchedulerRepoImpl): RunningSchedulerRepo
 }

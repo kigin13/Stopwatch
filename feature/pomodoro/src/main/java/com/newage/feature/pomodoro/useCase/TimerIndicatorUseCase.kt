@@ -5,9 +5,6 @@ import com.timers.stopwatch.core.domain.usecase.core.FlowUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.util.Timer
-import java.util.TimerTask
-import javax.inject.Inject
 
 class TimerIndicatorUseCase: FlowUseCase<TimerIndicatorModel, TimerIndicatorModel>() {
 
@@ -35,7 +32,6 @@ class TimerIndicatorUseCase: FlowUseCase<TimerIndicatorModel, TimerIndicatorMode
         ((currentTime.hours * 60) + currentTime.minutes) * 60
 
     fun currentTimeModel(percentage: Float, time: Triple<Int, Int, Int>): TimerIndicatorModel {
-//        val time = calculateCurrentTime()
         return TimerIndicatorModel(
             hours = time.first,
             minutes = time.second,

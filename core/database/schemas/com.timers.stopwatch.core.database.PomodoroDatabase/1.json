@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e7256875877afe9476f7eb2eade346e9",
+    "identityHash": "2aad4ab89f292b4f89a36b6b9679027c",
     "entities": [
       {
         "tableName": "promodoro_schedule",
@@ -53,12 +53,68 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "running_promodoro_schedule",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `pomodoro` INTEGER NOT NULL, `round` INTEGER NOT NULL, `title` TEXT NOT NULL, `duration` TEXT NOT NULL, `status` TEXT NOT NULL, `startTime` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pomodoro",
+            "columnName": "pomodoro",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "round",
+            "columnName": "round",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e7256875877afe9476f7eb2eade346e9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2aad4ab89f292b4f89a36b6b9679027c')"
     ]
   }
 }

@@ -12,6 +12,8 @@ import com.newage.feature.pomodoro.Constants
 import com.newage.feature.pomodoro.toTimeString
 import com.timers.stopwatch.core.common.android.R.color
 import com.timers.stopwatch.core.common.android.StopwatchFragment
+import com.timers.stopwatch.core.common.android.navigation.NavigationCommand
+import com.timers.stopwatch.core.data.model.PomodoroEnum
 import com.timers.stopwatch.feature.pomodoro.R
 import com.timers.stopwatch.feature.pomodoro.databinding.FragmentPomodoroTimerBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,11 +52,29 @@ class PomodoroTimerFragment :
     }
 
     private fun handlingClickEvents() {
+        binding.toolBar.promodoroBackBtn.setOnClickListener {
+            handleNavigationCommands(
+                NavigationCommand.Back
+            )
+        }
         binding.forwardButton.setOnClickListener {
             viewModel.handleForwardBtnClick()
         }
         binding.backwardButton.setOnClickListener {
             viewModel.handleBackwardBtnClick()
+        }
+        binding.buttonContainer.apply {
+            btnReset.setOnClickListener {
+                viewModel.handleResetBtnClick()
+            }
+
+            btnPlayPause.setOnClickListener {
+                viewModel.handleBtnPlayPauseClick()
+            }
+
+            btnStop.setOnClickListener {
+                viewModel.handleFinishBtnClick()
+            }
         }
     }
 
@@ -81,6 +101,11 @@ class PomodoroTimerFragment :
 
                     if (it == 0) {
                         binding.countDownTxt.visibility = View.GONE
+                    } else {
+                        binding.apply {
+                            countDownTxt.visibility = View.VISIBLE
+                            timerContainer.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -100,20 +125,23 @@ class PomodoroTimerFragment :
                 viewModel.currentSchedulers.collectLatest {
                     it?.let { schedule ->
                         val colorRes = when (schedule.title) {
-                            "Focus" -> color.progress_green
-                            "Short Break" -> color.error_text_color
-                            else -> color.dodger_blue_2
+                            PomodoroEnum.FOCUS -> color.progress_green
+                            PomodoroEnum.LONG_BREAK -> color.dodger_blue_2
+                            PomodoroEnum.SHORT_BREAK -> color.error_text_color
                         }
+
                         val color = ContextCompat.getColor(requireContext(), colorRes)
                         val subTitleTxt = "Round ${schedule.round}"
+                        val pomodoroTxt = "Pomodoro ${schedule.pomodoro}"
 
                         binding.apply {
                             timerContainer.visibility = View.VISIBLE
                             title.apply {
-                                text = schedule.title
+                                text = schedule.title.text
                                 setTextColor(color)
                             }
                             subTitle.text = subTitleTxt
+                            pomodoroTextCount.text = pomodoroTxt
                             pomodoroTextCount.setTextColor(color)
                             progressBarCircle.progressTintList = ColorStateList.valueOf(color)
                         }

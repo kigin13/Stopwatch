@@ -24,12 +24,20 @@
 
         <action
             android:id="@+id/action_pomodoro_round_fragment_to_pomodoro_result_fragment"
-            app:destination="@id/pomodoro_result_fragment" />
+            app:destination="@id/pomodoro_result_fragment"
+            app:popUpTo="@id/pomodoro_result_fragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
         android:id="@+id/pomodoro_result_fragment"
         android:name="com.newage.feature.pomodoro.presentation.pomodoroResult.PomodoroResultFragment"
         android:label="PomodoroResultFragment"
-        tools:layout="@layout/fragment_pomodoro_result" />
+        tools:layout="@layout/fragment_pomodoro_result" >
+        <action
+            android:id="@+id/action_pomodoro_result_fragment_to_pomodoro_fragment"
+            app:destination="@id/pomodoro_fragment"
+            app:popUpTo="@id/pomodoro_fragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
 </navigation>

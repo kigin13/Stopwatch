@@ -2,18 +2,21 @@ package com.newage.feature.pomodoro.presentation.pomodoroTimer
 
 import android.os.CountDownTimer
 import androidx.lifecycle.viewModelScope
-import com.newage.feature.pomodoro.model.PomodoroScheduler
-import com.newage.feature.pomodoro.model.PomodoroStatus
-import com.newage.feature.pomodoro.model.Time
 import com.newage.feature.pomodoro.model.TimerIndicatorModel
 import com.newage.feature.pomodoro.useCase.CountDownUseCase
 import com.newage.feature.pomodoro.useCase.TimerIndicatorUseCase
 import com.timers.stopwatch.core.common.android.StopwatchViewModel
 import com.timers.stopwatch.core.common.android.navigation.NavigationCommand
+import com.timers.stopwatch.core.data.model.PomodoroEnum
+import com.timers.stopwatch.core.data.model.PomodoroScheduler
+import com.timers.stopwatch.core.data.model.PomodoroStatus
+import com.timers.stopwatch.core.data.model.Time
 import com.timers.stopwatch.core.data.repository.PomodoroRepository
+import com.timers.stopwatch.core.data.repository.RunningSchedulerRepo
 import com.timers.stopwatch.core.database.model.PomodoroScheduleEntity
 import com.timers.stopwatch.core.domain.DispatchersProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,11 +25,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class PomodoroTimerViewModel @Inject constructor(
     private val repo: PomodoroRepository,
+    private val schedulerRepo: RunningSchedulerRepo,
     private val timerUseCase: TimerIndicatorUseCase,
     private val dispatchers: DispatchersProvider,
 ) : StopwatchViewModel() {
@@ -34,117 +39,142 @@ class PomodoroTimerViewModel @Inject constructor(
     private val _updatePomodoroProgress = MutableStateFlow(TimerIndicatorModel())
     val updatePomodoroProgress = _updatePomodoroProgress.asStateFlow()
 
-    private val _schedulers = MutableStateFlow(mutableListOf<PomodoroScheduler>())
+    private val _schedulers = MutableStateFlow((mutableListOf<PomodoroScheduleEntity>()))
 
     private val _currentSchedule = MutableStateFlow(-1)
 
+    private val getCurrentTick = MutableStateFlow(Time())
+
+    private val isPlaying = MutableStateFlow(true)
+
     private lateinit var countDownTimer: CountDownTimer
 
-    val currentSchedulers = _currentSchedule.map {
-        when (it == -1) {
-            true -> null
-            false -> _schedulers.value[it]
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    private var countDownFlow: Job? = null
+
+    val currentSchedulers = MutableStateFlow<PomodoroScheduler?>(null)
 
     val pomodoroTomato = _currentSchedule.map {
-        _schedulers.value.count { schedule ->
-            (schedule.status == PomodoroStatus.COMPLETED) && (schedule.title == "Focus")
-        }
+        schedulerRepo.getPomodoroCount()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0)
 
     val countDown = MutableStateFlow(5)
 
     init {
-        startPomodoroCountDown()
+        getCurrentScheduler()
         getScheduler()
     }
 
     private fun getScheduler() {
         viewModelScope.launch(dispatchers.io()) {
             val pomodoroSchedule = repo.getPomodoroSchedules()
-
-            val pomodoroSchedules = generateScheduler(pomodoroSchedule)
-
-            _schedulers.emit(pomodoroSchedules)
+            _schedulers.value = pomodoroSchedule.toMutableList()
         }
     }
 
-    private fun generateScheduler(schedulerEntry: List<PomodoroScheduleEntity>): MutableList<PomodoroScheduler> {
-        val pomodoroSchedules = emptyList<PomodoroScheduler>().toMutableList()
-
-        val pomodoroCount: Int = schedulerEntry[schedulerEntry.lastIndex].longBreakAfter
-
-        (1..pomodoroCount).forEach { index ->
-            pomodoroSchedules += PomodoroScheduler(
-                round = index,
-                title = "Focus",
-                duration = Time(
-                    hours = schedulerEntry[0].hours,
-                    minutes = schedulerEntry[0].minutes
-                )
-            )
-
-            pomodoroSchedules += PomodoroScheduler(
-                round = index,
-                title = "Short Break",
-                duration = Time(
-                    hours = schedulerEntry[1].hours,
-                    minutes = schedulerEntry[1].minutes
-                )
-            )
-        }
-
-        pomodoroSchedules += PomodoroScheduler(
-            round = 1,
-            title = "Long Break",
-            duration = Time(
-                hours = schedulerEntry[0].hours,
-                minutes = schedulerEntry[0].minutes
-            )
-        )
-        return pomodoroSchedules
+    private fun playNextSchedule() {
+        _currentSchedule.value += 1
+        getCurrentScheduler()
     }
 
-    private fun startPomodoroCountDown() {
-        CountDownUseCase().invoke().onEach {
-            countDown.emit(it)
-            if (it == 0) {
-                initiatePomodoroTimer()
+    private fun playPreviousSchedule() {
+        if (_currentSchedule.value > 0) {
+            _currentSchedule.value -= 1
+        }
+        getCurrentScheduler()
+    }
+
+    private fun getCurrentScheduler() {
+        val currentPomodoro = _currentSchedule.value
+        if (currentPomodoro == -1) {
+            startPomodoroCountDown()
+            return
+        }
+
+        val pomodoroRounds = _schedulers.value.last().longBreakAfter
+        val perPomodoroCycle = (pomodoroRounds * 2) + 1
+
+        val round = (currentPomodoro / perPomodoroCycle) + 1
+        val currentCycle = (currentPomodoro + 1) % perPomodoroCycle
+        val pomodoro = ((round - 1) * pomodoroRounds) + ((currentCycle + 1) / 2)
+
+        when (currentCycle) {
+            0 -> runLongBreak(round, pomodoro)
+            else -> when (currentCycle % 2 == 0) {
+                true -> runShortBreak(round, pomodoro)
+                false -> runFocusMode(round, pomodoro)
             }
-        }.launchIn(viewModelScope)
+        }
     }
 
-    private fun initiatePomodoroTimer() {
-        val index = _currentSchedule.value + 1
+    private fun runShortBreak(round: Int, pomodoro: Int) {
+        currentSchedulers.value = PomodoroScheduler(
+            pomodoro = pomodoro,
+            round = round,
+            title = PomodoroEnum.SHORT_BREAK,
+            duration = Time(
+                hours = _schedulers.value[1].hours,
+                minutes = _schedulers.value[1].minutes
+            ),
+            startTime = getCurrentTime()
+        )
+        saveCurrentScheduleAndStartTimer()
+    }
 
-        if (_schedulers.value.size < 1) return
-        _schedulers.value[index].let {
-            _currentSchedule.value = index
-            _schedulers.value[index] = _schedulers.value[index].copy(
-                status = PomodoroStatus.RUNNING
-            )
-            countdownTimer(calculateSeconds(it.duration))
+    private fun runFocusMode(round: Int, pomodoro: Int) {
+        currentSchedulers.value = PomodoroScheduler(
+            pomodoro = pomodoro,
+            round = round,
+            title = PomodoroEnum.FOCUS,
+            duration = Time(
+                hours = _schedulers.value[0].hours,
+                minutes = _schedulers.value[0].minutes
+            ),
+            startTime = getCurrentTime()
+        )
+        saveCurrentScheduleAndStartTimer()
+    }
+
+    private fun runLongBreak(round: Int, pomodoro: Int) {
+        currentSchedulers.value = PomodoroScheduler(
+            pomodoro = pomodoro,
+            round = round,
+            title = PomodoroEnum.LONG_BREAK,
+            duration = Time(
+                hours = _schedulers.value[0].hours,
+                minutes = _schedulers.value[0].minutes
+            ),
+            startTime = getCurrentTime()
+        )
+        saveCurrentScheduleAndStartTimer()
+    }
+
+    private fun saveCurrentScheduleAndStartTimer() {
+        saveCurrentSchedule()
+        currentSchedulers.value?.let {
+            countdownTimer(it.duration.getSeconds())
             countDownTimer.start()
         }
     }
 
-    private fun calculateSeconds(currentTime: Time): Long =
-        (((currentTime.hours * 60) + currentTime.minutes) * 60).toLong()
+    private fun startPomodoroCountDown() {
+        countDownFlow = CountDownUseCase().invoke().onEach {
+            countDown.emit(it)
+            if (it == 0) {
+                playNextSchedule()
+            }
+        }.launchIn(viewModelScope)
+    }
 
     private fun countdownTimer(timeSeconds: Long) {
         countDownTimer = object : CountDownTimer(timeSeconds * 1000, 1000) {
             override fun onFinish() {
-                val index = _currentSchedule.value
-                _schedulers.value[index] = _schedulers.value[index].copy(
-                    status = PomodoroStatus.COMPLETED
-                )
-                handlePomodoroTimer(index)
+                handlePomodoroCompleted()
             }
 
             override fun onTick(remainingTimeMillis: Long) {
                 val remainingTimeSeconds = (remainingTimeMillis / 1000).toInt()
-                val percentagePassed = (remainingTimeSeconds.toDouble() / timeSeconds) * 100
+                val percentagePassed =
+                    (remainingTimeSeconds.toDouble() / currentSchedulers.value?.duration?.getSeconds()!!) * 100
                 val roundedPercentage = percentagePassed.toFloat()
 
                 val time = timerUseCase.calculateCurrentTime(remainingTimeSeconds)
@@ -157,13 +187,25 @@ class PomodoroTimerViewModel @Inject constructor(
         }
     }
 
-    private fun handlePomodoroTimer(index: Int) {
-        countDownTimer.cancel()
+    private fun handlePomodoroCompleted() {
+        updateCurrentPomodoro(PomodoroStatus.COMPLETED)
+        playNextSchedule()
+    }
 
-        if (_schedulers.value.lastIndex < index + 1) {
-            pomodoroScheduleCompleted()
-        } else {
-            initiatePomodoroTimer()
+    private fun saveCurrentSchedule() {
+        viewModelScope.launch {
+            currentSchedulers.value?.asEntity()?.let {
+                val id = schedulerRepo.insertRunningSchedule(it)
+                currentSchedulers.value = currentSchedulers.value?.copy(id = id.toInt())
+            }
+        }
+    }
+
+    private fun updateCurrentPomodoro(status: PomodoroStatus) {
+        viewModelScope.launch {
+            currentSchedulers.value?.asEntity()?.let {
+                schedulerRepo.updateRunningSchedule(it.id!!, status.name)
+            }
         }
     }
 
@@ -176,15 +218,55 @@ class PomodoroTimerViewModel @Inject constructor(
     }
 
     fun handleForwardBtnClick() {
-        val index = _currentSchedule.value
-        _schedulers.value[index] = _schedulers.value[index].copy(
-            status = PomodoroStatus.CANCELED
-        )
-        handlePomodoroTimer(index)
+        isPlaying.value = true
+        countDownTimer.cancel()
+        updateCurrentPomodoro(PomodoroStatus.CANCELED)
+        playNextSchedule()
     }
 
     fun handleBackwardBtnClick() {
-        _currentSchedule.value -= 2
-        handlePomodoroTimer(_currentSchedule.value)
+        isPlaying.value = true
+        countDownTimer.cancel()
+        playPreviousSchedule()
+    }
+
+    fun handleResetBtnClick() {
+        safeCancelCountDown()
+        _currentSchedule.value = -1
+        getCurrentScheduler()
+    }
+
+    private fun getCurrentTime(): Time {
+        val calendar = Calendar.getInstance()
+        val hours = calendar.get(Calendar.HOUR_OF_DAY)
+        val minutes = calendar.get(Calendar.MINUTE)
+        val seconds = calendar.get(Calendar.SECOND)
+
+        return Time(hours, minutes, seconds)
+    }
+
+    fun handleBtnPlayPauseClick() {
+        if (isPlaying.value) {
+            getCurrentTick.value =
+                _updatePomodoroProgress.value.let { Time(it.hours, it.minutes, it.seconds) }
+
+            countDownTimer.cancel()
+        } else {
+            countdownTimer(getCurrentTick.value.getSeconds())
+            countDownTimer.start()
+        }
+        isPlaying.value = !(isPlaying.value)
+    }
+
+    fun handleFinishBtnClick() {
+        safeCancelCountDown()
+        pomodoroScheduleCompleted()
+    }
+
+    private fun safeCancelCountDown() {
+        countDownFlow?.cancel()
+        try {
+            countDownTimer.cancel()
+        } catch (_: Exception) {}
     }
 }

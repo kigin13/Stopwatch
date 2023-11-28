@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="promodoroTitleStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/_18ssp</item>
+        <item name="fontFamily">@font/inter_700</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="promodoroLabelStyle">
+        <item name="android:textColor">@color/boulde</item>
+        <item name="android:layout_marginTop">@dimen/_3sdp</item>
+        <item name="android:textSize">@dimen/_9ssp</item>
+        <item name="fontFamily">@font/inter_400</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="counterEditTextStyle">
+        <item name="android:background">@color/athens_gray</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:inputType">numberDecimal</item>
+        <item name="android:padding">@dimen/_5ssp</item>
+        <item name="android:text">@string/_00</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/mako</item>
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="fontFamily">@font/inter_400</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLength">2</item>
+    </style>
+
+    <style name="toolBarStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/header_bar_height</item>
+        <item name="android:background">@color/dodger_blue_2</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+</resources>

@@ -16,6 +16,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(projects.core.log)
+    implementation(project(mapOf("path" to ":core:database")))
     kapt(libs.hilt.compiler)
 
     implementation(libs.kotlinx.datetime)

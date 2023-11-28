@@ -49,4 +49,6 @@
     <color name="dodger_blue">#468FFF</color>
     <color name="dodger_blue_2">#147EFB</color>
     <color name="mountain_mist">#919094</color>
+
+    <color name="progress_green">#01A742</color>
 </resources>

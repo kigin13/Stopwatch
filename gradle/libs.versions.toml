@@ -25,6 +25,7 @@ room = "2.5.2"
 ksp = "1.9.0-1.0.12"
 gradleVersions = "0.47.0"
 sdp = "1.1.0"
+org-jetbrains-kotlin-android = "1.9.0"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
@@ -73,3 +74,4 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf-gradle" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 gradleVersions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersions" }
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }

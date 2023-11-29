@@ -1,4 +1,4 @@
-package com.timers.stopwatch.core.database.model
+package com.timers.stopwatch.core.model
 
 data class Time(
     val hours: Int = 0,

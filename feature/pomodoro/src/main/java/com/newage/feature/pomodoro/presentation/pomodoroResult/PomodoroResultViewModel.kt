@@ -2,7 +2,7 @@ package com.newage.feature.pomodoro.presentation.pomodoroResult
 
 import androidx.lifecycle.viewModelScope
 import com.timers.stopwatch.core.common.android.StopwatchViewModel
-import com.timers.stopwatch.core.data.repository.RunningSchedulerRepo
+import com.timers.stopwatch.core.domain.repository.RunningSchedulerRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

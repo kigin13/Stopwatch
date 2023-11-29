@@ -3,18 +3,17 @@ package com.newage.feature.pomodoro.presentation.pomodoroTimer
 import android.os.CountDownTimer
 import androidx.lifecycle.viewModelScope
 import com.newage.feature.pomodoro.model.TimerIndicatorModel
-import com.newage.feature.pomodoro.useCase.CountDownUseCase
-import com.newage.feature.pomodoro.useCase.TimerIndicatorUseCase
+import com.timers.stopwatch.core.domain.usecase.featurePomodoro.CountDownUseCase
 import com.timers.stopwatch.core.common.android.StopwatchViewModel
 import com.timers.stopwatch.core.common.android.navigation.NavigationCommand
-import com.timers.stopwatch.core.data.model.PomodoroEnum
-import com.timers.stopwatch.core.data.model.PomodoroScheduler
-import com.timers.stopwatch.core.data.model.PomodoroStatus
-import com.timers.stopwatch.core.data.model.Time
-import com.timers.stopwatch.core.data.repository.PomodoroRepository
-import com.timers.stopwatch.core.data.repository.RunningSchedulerRepo
-import com.timers.stopwatch.core.database.model.PomodoroScheduleEntity
+import com.timers.stopwatch.core.model.PomodoroEnum
+import com.timers.stopwatch.core.model.PomodoroRunningScheduler
+import com.timers.stopwatch.core.model.PomodoroStatus
+import com.timers.stopwatch.core.model.Time
+import com.timers.stopwatch.core.domain.repository.PomodoroRepository
+import com.timers.stopwatch.core.domain.repository.RunningSchedulerRepo
 import com.timers.stopwatch.core.domain.DispatchersProvider
+import com.timers.stopwatch.core.model.PomodoroScheduleModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,14 +31,13 @@ import javax.inject.Inject
 class PomodoroTimerViewModel @Inject constructor(
     private val repo: PomodoroRepository,
     private val schedulerRepo: RunningSchedulerRepo,
-    private val timerUseCase: TimerIndicatorUseCase,
     private val dispatchers: DispatchersProvider,
 ) : StopwatchViewModel() {
 
     private val _updatePomodoroProgress = MutableStateFlow(TimerIndicatorModel())
     val updatePomodoroProgress = _updatePomodoroProgress.asStateFlow()
 
-    private val _schedulers = MutableStateFlow((mutableListOf<PomodoroScheduleEntity>()))
+    private val _schedulers = MutableStateFlow((mutableListOf<PomodoroScheduleModel>()))
 
     private val _currentSchedule = MutableStateFlow(-1)
 
@@ -51,7 +49,7 @@ class PomodoroTimerViewModel @Inject constructor(
 
     private var countDownFlow: Job? = null
 
-    val currentSchedulers = MutableStateFlow<PomodoroScheduler?>(null)
+    val currentSchedulers = MutableStateFlow<PomodoroRunningScheduler?>(null)
 
     val pomodoroTomato = _currentSchedule.map {
         schedulerRepo.getPomodoroCount()
@@ -107,7 +105,7 @@ class PomodoroTimerViewModel @Inject constructor(
     }
 
     private fun runShortBreak(round: Int, pomodoro: Int) {
-        currentSchedulers.value = PomodoroScheduler(
+        currentSchedulers.value = PomodoroRunningScheduler(
             pomodoro = pomodoro,
             round = round,
             title = PomodoroEnum.SHORT_BREAK,
@@ -121,7 +119,7 @@ class PomodoroTimerViewModel @Inject constructor(
     }
 
     private fun runFocusMode(round: Int, pomodoro: Int) {
-        currentSchedulers.value = PomodoroScheduler(
+        currentSchedulers.value = PomodoroRunningScheduler(
             pomodoro = pomodoro,
             round = round,
             title = PomodoroEnum.FOCUS,
@@ -135,7 +133,7 @@ class PomodoroTimerViewModel @Inject constructor(
     }
 
     private fun runLongBreak(round: Int, pomodoro: Int) {
-        currentSchedulers.value = PomodoroScheduler(
+        currentSchedulers.value = PomodoroRunningScheduler(
             pomodoro = pomodoro,
             round = round,
             title = PomodoroEnum.LONG_BREAK,
@@ -177,10 +175,10 @@ class PomodoroTimerViewModel @Inject constructor(
                     (remainingTimeSeconds.toDouble() / currentSchedulers.value?.duration?.getSeconds()!!) * 100
                 val roundedPercentage = percentagePassed.toFloat()
 
-                val time = timerUseCase.calculateCurrentTime(remainingTimeSeconds)
+                val time = calculateCurrentTime(remainingTimeSeconds)
 
                 viewModelScope.launch {
-                    val model = timerUseCase.currentTimeModel(roundedPercentage, time)
+                    val model = currentTimeModel(roundedPercentage, time)
                     _updatePomodoroProgress.emit(model)
                 }
             }
@@ -194,7 +192,7 @@ class PomodoroTimerViewModel @Inject constructor(
 
     private fun saveCurrentSchedule() {
         viewModelScope.launch {
-            currentSchedulers.value?.asEntity()?.let {
+            currentSchedulers.value?.let {
                 val id = schedulerRepo.insertRunningSchedule(it)
                 currentSchedulers.value = currentSchedulers.value?.copy(id = id.toInt())
             }
@@ -203,7 +201,7 @@ class PomodoroTimerViewModel @Inject constructor(
 
     private fun updateCurrentPomodoro(status: PomodoroStatus) {
         viewModelScope.launch {
-            currentSchedulers.value?.asEntity()?.let {
+            currentSchedulers.value?.let {
                 schedulerRepo.updateRunningSchedule(it.id!!, status.name)
             }
         }
@@ -268,5 +266,22 @@ class PomodoroTimerViewModel @Inject constructor(
         try {
             countDownTimer.cancel()
         } catch (_: Exception) {}
+    }
+
+    fun calculateCurrentTime(remainingTime: Int): Triple<Int, Int, Int> {
+        val hours = remainingTime / 3600
+        val remainingSecondsAfterHours = remainingTime % 3600
+        val minutes = remainingSecondsAfterHours / 60
+        val seconds = remainingSecondsAfterHours % 60
+        return Triple(hours, minutes, seconds)
+    }
+
+    fun currentTimeModel(percentage: Float, time: Triple<Int, Int, Int>): TimerIndicatorModel {
+        return TimerIndicatorModel(
+            hours = time.first,
+            minutes = time.second,
+            seconds = time.third,
+            percentage = percentage
+        )
     }
 }

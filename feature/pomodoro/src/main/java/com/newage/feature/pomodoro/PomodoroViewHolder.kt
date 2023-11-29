@@ -1,98 +1,94 @@
 package com.newage.feature.pomodoro
 
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
-import com.newage.feature.pomodoro.useCase.TimeManipulationUseCase
 import com.timers.stopwatch.core.common.android.R.color
 import com.timers.stopwatch.core.common.android.adapter.BaseViewHolder
-import com.timers.stopwatch.core.database.model.PomodoroScheduleEntity
+import com.timers.stopwatch.core.domain.usecase.featurePomodoro.PomodoroCountChangeUseCase
+import com.timers.stopwatch.core.domain.usecase.featurePomodoro.TimeManipulationUseCase
+import com.timers.stopwatch.core.model.PomodoroScheduleModel
 import com.timers.stopwatch.feature.pomodoro.databinding.PromodoroSchedulerItemViewBinding
-import java.text.DecimalFormat
 
 class PomodoroViewHolder(
     private val schedulerBinding: PromodoroSchedulerItemViewBinding,
     private val schedulerCallBack: ((SchedulerItemCallback) -> Unit)?
-) : BaseViewHolder<PomodoroScheduleEntity>(schedulerBinding.root) {
+) : BaseViewHolder<PomodoroScheduleModel>(schedulerBinding.root) {
 
     override val binding: ViewBinding
         get() = this.schedulerBinding
 
-    override fun bind(model: PomodoroScheduleEntity) {
-        val isPomodoro = model.isPomodoro
-        schedulerBinding.apply {
+    override fun bind(model: PomodoroScheduleModel) {
+        updateUI(model)
+        applyListeners(model)
+    }
 
-            counterContainer.visibility = isPomodoro.getVisibility()
-            timeContainer.visibility = (!isPomodoro).getVisibility()
+    private fun updateUI(model: PomodoroScheduleModel) {
+        schedulerBinding.apply {
+            counterContainer.visibility = model.isPomodoro.getVisibility()
+            timeContainer.visibility = (!model.isPomodoro).getVisibility()
 
             pomodoroTxt.setText("${model.longBreakAfter}")
 
             promodoroTitleTxt.text = model.title
             bindTime(Pair(model.hours, model.minutes))
-
-            btnPlus.setOnClickListener {
-                handlePlusBtnClicked(isPomodoro)
-            }
-
-            btnMinus.setOnClickListener {
-                handlePlusBtnClicked(isPomodoro, false)
-            }
-
-            hoursView.apply {
-                setOnEditorActionListener(editCompleteAction)
-                onFocusChangeListener = editFocusChange
-            }
-
-            minutesView.apply {
-                setOnEditorActionListener(editCompleteAction)
-                onFocusChangeListener = editFocusChange
-            }
-
-            pomodoroTxt.apply {
-                setOnEditorActionListener(editCompleteAction)
-                onFocusChangeListener = editFocusChange
-            }
         }
     }
 
-    private val editFocusChange = View.OnFocusChangeListener { v, hasFocus ->
+    private fun applyListeners(model: PomodoroScheduleModel) {
+        schedulerBinding.apply {
+            btnPlus.setOnClickListener {
+                handleBtnClicked(model.isPomodoro)
+            }
+            btnMinus.setOnClickListener {
+                handleBtnClicked(model.isPomodoro, false)
+            }
+            hoursView.applyFocus()
+
+            minutesView.applyFocus()
+
+            pomodoroTxt.applyFocus()
+        }
+    }
+
+
+    private fun EditText.applyFocus() {
+        this.setOnEditorActionListener(editCompleteAction)
+        onFocusChangeListener = editFocusChange
+    }
+
+    private val editFocusChange = View.OnFocusChangeListener { view, hasFocus ->
         if (hasFocus) {
-            Log.d("adapterPosition", layoutPosition.toString())
             schedulerCallBack?.let {
-                Log.d("schedulerCallBack", "OnFocusChanged")
                 it(SchedulerItemCallback.OnFocusChanged(adapterPosition))
             }
-            focusedViewChanged(v)
+            focusedViewChanged(view)
         }
     }
 
-    fun focusedViewChanged(v: View?) {
+    fun focusedViewChanged(view: View?) =
         schedulerBinding.apply {
-            hoursContainer.strokeWidth = if (v?.id == hoursView.id) 3 else 0
-            minutesContainer.strokeWidth = if (v?.id == minutesView.id) 3 else 0
-            pomodoroCounter.strokeWidth = if (v?.id == pomodoroTxt.id) 3 else 0
+            hoursContainer.strokeWidth = if (view?.id == hoursView.id) 3 else 0
+            minutesContainer.strokeWidth = if (view?.id == minutesView.id) 3 else 0
+            pomodoroCounter.strokeWidth = if (view?.id == pomodoroTxt.id) 3 else 0
+
+            labelHour.setTextColor(getColor(view?.id == hoursView.id))
+            labelMinute.setTextColor(getColor(view?.id == minutesView.id))
+            labelPomodoro.setTextColor(getColor(view?.id == pomodoroTxt.id))
+            replaceEmptyText()
         }
 
-        schedulerBinding.apply {
-            labelHour.setTextColor(getColor(v?.id == hoursView.id))
-            labelMinute.setTextColor(getColor(v?.id == minutesView.id))
-            labelPomodoro.setTextColor(getColor(v?.id == pomodoroTxt.id))
-        }
 
-        replaceEmptyText()
-    }
-
-    private fun replaceEmptyText() {
+    private fun replaceEmptyText() =
         schedulerBinding.apply {
             hoursView.replaceIfEmpty("00")
             minutesView.replaceIfEmpty("00")
             pomodoroTxt.replaceIfEmpty("00")
         }
-    }
+
 
     private fun getColor(isSelected: Boolean): Int {
         val context = schedulerBinding.root.context
@@ -115,7 +111,7 @@ class PomodoroViewHolder(
     }
 
 
-    private fun handlePlusBtnClicked(isPomodoro: Boolean, isPlusBtn: Boolean = true) {
+    private fun handleBtnClicked(isPomodoro: Boolean, isPlusBtn: Boolean = true) {
         removeFocus()
         when {
             isPomodoro -> calculatePomodoroCount(isPlusBtn)
@@ -125,17 +121,18 @@ class PomodoroViewHolder(
     }
 
     private fun calculatePomodoroCount(isPlusBtn: Boolean) {
-        var pomodoroCount = schedulerBinding.pomodoroTxt.text.toString().toInt()
 
-        if (pomodoroCount <= 1 && !isPlusBtn) return
+        schedulerBinding.apply {
+            val newCount = PomodoroCountChangeUseCase.getNewCount(
+                pomodoroTxt.text.toString().toInt(),
+                isPlusBtn
+            )
 
-        if (isPlusBtn) pomodoroCount++ else pomodoroCount--
+            pomodoroTxt.setText("$newCount")
 
-        schedulerBinding.pomodoroTxt.setText("$pomodoroCount")
-
-        schedulerCallBack?.let {
-//            it(SchedulerItemCallback.OnFocusChanged(adapterPosition))
-            it(SchedulerItemCallback.OnPomodoroCountChange(adapterPosition, pomodoroCount))
+            schedulerCallBack?.let {
+                it(SchedulerItemCallback.OnPomodoroCountChange(adapterPosition, newCount))
+            }
         }
     }
 
@@ -167,7 +164,6 @@ class PomodoroViewHolder(
         }
 
         schedulerCallBack?.let {
-//            it(SchedulerItemCallback.OnFocusChanged(adapterPosition))
             it(SchedulerItemCallback.OnTimeChange(adapterPosition, newTime))
         }
     }
@@ -179,11 +175,5 @@ class PomodoroViewHolder(
             pomodoroTxt.clearFocus()
         }
         focusedViewChanged(null)
-    }
-}
-
-private fun EditText.replaceIfEmpty(defaultText: String) {
-    if (this.text.isNullOrEmpty()) {
-        this.setText(defaultText)
     }
 }

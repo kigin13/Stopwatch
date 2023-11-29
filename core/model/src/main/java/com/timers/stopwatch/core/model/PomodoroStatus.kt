@@ -1,4 +1,4 @@
-package com.timers.stopwatch.core.data.model
+package com.timers.stopwatch.core.model
 
 enum class PomodoroStatus {
     ADDED,

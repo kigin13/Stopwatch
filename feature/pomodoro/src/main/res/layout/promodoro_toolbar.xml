@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:id="@+id/quber_toolbar"
-        style="@style/toolBarStyle"
+        style="@style/ToolBarStyle"
         android:layout_gravity="center"
         android:orientation="horizontal">
 
@@ -23,7 +23,7 @@
 
         <TextView
             android:id="@+id/quber_title"
-            style="@style/promodoroTitleStyle"
+            style="@style/PromodoroTitleStyle"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="1"

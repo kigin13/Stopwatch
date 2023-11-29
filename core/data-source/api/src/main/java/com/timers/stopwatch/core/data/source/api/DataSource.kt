@@ -1,8 +1,8 @@
 package com.timers.stopwatch.core.data.source.api
 
-import com.timers.stopwatch.core.data.source.api.model.PomodoroScheduleModel
+import com.timers.stopwatch.core.model.PomodoroScheduleModel
 
-class DataSource {
+object DataSource {
 
     fun getDefaultSchedule(): List<PomodoroScheduleModel> {
         return listOf(

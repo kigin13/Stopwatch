@@ -1,4 +1,4 @@
-package com.timers.stopwatch.core.data.source.api.model
+package com.timers.stopwatch.core.model
 
 
 data class PomodoroScheduleModel(

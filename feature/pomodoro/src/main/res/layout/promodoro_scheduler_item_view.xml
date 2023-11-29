@@ -83,14 +83,14 @@
 
                     <EditText
                         android:id="@+id/hoursView"
-                        style="@style/counterEditTextStyle"
+                        style="@style/CounterEditTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <TextView
                     android:id="@+id/labelHour"
-                    style="@style/promodoroLabelStyle"
+                    style="@style/PromodoroLabelStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/hour"
@@ -113,14 +113,14 @@
 
                     <EditText
                         android:id="@+id/minutesView"
-                        style="@style/counterEditTextStyle"
+                        style="@style/CounterEditTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <TextView
                     android:id="@+id/labelMinute"
-                    style="@style/promodoroLabelStyle"
+                    style="@style/PromodoroLabelStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/minute"
@@ -155,14 +155,14 @@
 
                     <EditText
                         android:id="@+id/pomodoroTxt"
-                        style="@style/counterEditTextStyle"
+                        style="@style/CounterEditTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <TextView
                     android:id="@+id/labelPomodoro"
-                    style="@style/promodoroLabelStyle"
+                    style="@style/PromodoroLabelStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pomodoro"

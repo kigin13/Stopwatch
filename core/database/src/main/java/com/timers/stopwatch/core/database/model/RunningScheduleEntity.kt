@@ -11,7 +11,7 @@ data class RunningScheduleEntity(
     val pomodoro: Int,
     val round: Int,
     val title: String,
-    val duration: Time,
+    val duration: TimeEntity,
     val status: String,
-    val startTime: Time
+    val startTime: TimeEntity
 )

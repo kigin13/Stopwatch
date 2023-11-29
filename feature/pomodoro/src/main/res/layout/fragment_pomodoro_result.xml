@@ -22,7 +22,7 @@
 
         <TextView
             android:id="@+id/resultTitle"
-            style="@style/promodoroTitleStyle"
+            style="@style/PromodoroTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Well Done!"

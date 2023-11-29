@@ -3,10 +3,9 @@ package com.timers.stopwatch.core.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import com.timers.stopwatch.core.database.constants.PomodoroDbConstants.RUNNING_SCHEDULE
 import com.timers.stopwatch.core.database.model.RunningScheduleEntity
-import com.timers.stopwatch.core.database.model.Time
+import com.timers.stopwatch.core.database.model.TimeEntity
 
 @Dao
 interface RunningScheduleDao {
@@ -20,7 +19,7 @@ interface RunningScheduleDao {
     ): Int
 
     @Query("SELECT startTime FROM $RUNNING_SCHEDULE LIMIT 1")
-    suspend fun getStartTime(): Time
+    suspend fun getStartTime(): TimeEntity
 
     @Query("UPDATE $RUNNING_SCHEDULE SET status = :status WHERE id = :id")
     suspend fun updateRunningSchedule(id: Int, status: String)

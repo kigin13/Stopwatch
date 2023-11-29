@@ -1,6 +1,6 @@
-package com.newage.feature.pomodoro.useCase
+package com.timers.stopwatch.core.domain.usecase.featurePomodoro
 
-import com.timers.stopwatch.core.data.repository.PomodoroRepository
+import com.timers.stopwatch.core.domain.repository.PomodoroRepository
 import javax.inject.Inject
 
 class GetSchedulerUseCase @Inject constructor(

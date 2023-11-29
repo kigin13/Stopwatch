@@ -13,7 +13,7 @@ import com.newage.feature.pomodoro.toTimeString
 import com.timers.stopwatch.core.common.android.R.color
 import com.timers.stopwatch.core.common.android.StopwatchFragment
 import com.timers.stopwatch.core.common.android.navigation.NavigationCommand
-import com.timers.stopwatch.core.data.model.PomodoroEnum
+import com.timers.stopwatch.core.model.PomodoroEnum
 import com.timers.stopwatch.feature.pomodoro.R
 import com.timers.stopwatch.feature.pomodoro.databinding.FragmentPomodoroTimerBinding
 import dagger.hilt.android.AndroidEntryPoint

@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.timers.stopwatch.core.common.android.StopwatchViewModel
-import com.timers.stopwatch.core.data.repository.PomodoroRepository
-import com.timers.stopwatch.core.database.model.PomodoroScheduleEntity
 import com.timers.stopwatch.core.domain.DispatchersProvider
+import com.timers.stopwatch.core.domain.repository.PomodoroRepository
+import com.timers.stopwatch.core.model.PomodoroScheduleModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -23,10 +23,10 @@ class PomodoroViewModel @Inject constructor(
 
     val oldFocus = MutableStateFlow(-1)
 
-    private val _schedulers = MutableLiveData<Pair<Boolean, List<PomodoroScheduleEntity>>>(
+    private val _schedulers = MutableLiveData<Pair<Boolean, List<PomodoroScheduleModel>>>(
         Pair(false, emptyList())
     )
-    val schedulers: LiveData<Pair<Boolean, List<PomodoroScheduleEntity>>> = _schedulers
+    val schedulers: LiveData<Pair<Boolean, List<PomodoroScheduleModel>>> = _schedulers
 
     fun getScheduler() {
         viewModelScope.launch(dispatchers.io()) {
@@ -37,7 +37,7 @@ class PomodoroViewModel @Inject constructor(
 
     fun setNewTime(index: Int, newTime: Pair<Int, Int>) {
         val temp = schedulers.value?.second?.toMutableList()
-            ?: emptyList<PomodoroScheduleEntity>().toMutableList()
+            ?: emptyList<PomodoroScheduleModel>().toMutableList()
 
         if (index < 0) return
 
@@ -51,7 +51,7 @@ class PomodoroViewModel @Inject constructor(
 
     fun pomodoroCountChange(index: Int, count: Int) {
         val temp = schedulers.value?.second?.toMutableList()
-            ?: emptyList<PomodoroScheduleEntity>().toMutableList()
+            ?: emptyList<PomodoroScheduleModel>().toMutableList()
 
         if (index < 0) return
 
@@ -64,7 +64,7 @@ class PomodoroViewModel @Inject constructor(
         _schedulers.postValue(Pair(false, temp))
     }
 
-    private fun updateSchedule(updatedSchedule: PomodoroScheduleEntity) {
+    private fun updateSchedule(updatedSchedule: PomodoroScheduleModel) {
         viewModelScope.launch {
             repo.updateSchedule(updatedSchedule)
         }

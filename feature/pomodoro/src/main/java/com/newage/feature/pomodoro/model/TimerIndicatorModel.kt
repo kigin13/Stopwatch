@@ -7,4 +7,4 @@ data class TimerIndicatorModel(
     val minutes: Int = 0,
     val seconds: Int = 0,
     val percentage: Float = 0F
-) : UseCase.Params
+)

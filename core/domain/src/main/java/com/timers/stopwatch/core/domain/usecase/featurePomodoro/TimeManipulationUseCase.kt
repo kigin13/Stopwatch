@@ -1,4 +1,4 @@
-package com.newage.feature.pomodoro.useCase
+package com.timers.stopwatch.core.domain.usecase.featurePomodoro
 
 object TimeManipulationUseCase {
 

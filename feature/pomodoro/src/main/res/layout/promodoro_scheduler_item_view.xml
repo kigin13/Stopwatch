@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_15sdp"
+        app:cardCornerRadius="@dimen/_6sdp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_15sdp">
+
+            <TextView
+                android:id="@+id/promodoroTitleTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:text="@string/focus_duration"
+                android:textColor="@color/boulde"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/guideLine1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideLine1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".32" />
+
+            <ImageView
+                android:id="@+id/btnPlus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:src="@drawable/plus"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideLine1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/timeContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@id/btnPlus"
+                app:layout_constraintEnd_toStartOf="@id/btnMinus"
+                app:layout_constraintStart_toEndOf="@id/btnPlus"
+                app:layout_constraintTop_toTopOf="@id/btnPlus">
+
+                <TextView
+                    android:id="@+id/txtColon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_5sdp"
+                    android:text="@string/txtColon"
+                    android:textSize="@dimen/_15ssp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias=".3" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/hoursContainer"
+                    android:layout_width="@dimen/_28sdp"
+                    android:layout_height="@dimen/_28sdp"
+                    app:cardCornerRadius="@dimen/_4sdp"
+                    app:cardElevation="3dp"
+                    app:layout_constraintBottom_toTopOf="@id/labelHour"
+                    app:layout_constraintEnd_toStartOf="@id/txtColon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/dodger_blue_2">
+
+                    <EditText
+                        android:id="@+id/hoursView"
+                        style="@style/CounterEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/labelHour"
+                    style="@style/PromodoroLabelStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hour"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/hoursContainer"
+                    app:layout_constraintStart_toStartOf="@id/hoursContainer"
+                    app:layout_constraintTop_toBottomOf="@id/hoursContainer" />
+
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/minutesContainer"
+                    android:layout_width="@dimen/_28sdp"
+                    android:layout_height="@dimen/_28sdp"
+                    app:cardCornerRadius="@dimen/_4sdp"
+                    app:cardElevation="3dp"
+                    app:layout_constraintBottom_toTopOf="@id/labelMinute"
+                    app:layout_constraintStart_toEndOf="@id/txtColon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/dodger_blue_2">
+
+                    <EditText
+                        android:id="@+id/minutesView"
+                        style="@style/CounterEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/labelMinute"
+                    style="@style/PromodoroLabelStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/minute"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/minutesContainer"
+                    app:layout_constraintStart_toStartOf="@id/minutesContainer"
+                    app:layout_constraintTop_toBottomOf="@id/minutesContainer" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/counterContainer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_5sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/btnPlus"
+                app:layout_constraintEnd_toStartOf="@id/btnMinus"
+                app:layout_constraintStart_toEndOf="@id/btnPlus"
+                app:layout_constraintTop_toTopOf="@id/btnPlus">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/pomodoroCounter"
+                    android:layout_width="@dimen/_65sdp"
+                    android:layout_height="@dimen/_28sdp"
+                    app:cardCornerRadius="@dimen/_4sdp"
+                    app:cardElevation="3dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/dodger_blue_2">
+
+                    <EditText
+                        android:id="@+id/pomodoroTxt"
+                        style="@style/CounterEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/labelPomodoro"
+                    style="@style/PromodoroLabelStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pomodoro"
+                    app:layout_constraintEnd_toEndOf="@id/pomodoroCounter"
+                    app:layout_constraintStart_toStartOf="@id/pomodoroCounter"
+                    app:layout_constraintTop_toBottomOf="@id/pomodoroCounter" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/btnMinus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/minus"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

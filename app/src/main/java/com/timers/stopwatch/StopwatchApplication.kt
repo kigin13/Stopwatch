@@ -9,7 +9,6 @@ import timber.log.Timber
  */
 @HiltAndroidApp
 class StopwatchApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {

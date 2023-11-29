@@ -1,5 +1,10 @@
 package com.timers.stopwatch.core.data
 
+import com.timers.stopwatch.core.data.repositoryImpl.PomodoroRepositoryImp
+import com.timers.stopwatch.core.data.repositoryImpl.RunningSchedulerRepoImpl
+import com.timers.stopwatch.core.domain.repository.PomodoroRepository
+import com.timers.stopwatch.core.domain.repository.RunningSchedulerRepo
+import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -9,4 +14,11 @@ import dagger.hilt.components.SingletonComponent
  */
 @Module
 @InstallIn(SingletonComponent::class)
-interface RepositoryModule
+interface RepositoryModule {
+
+    @Binds
+    fun bindsPomodoroRepository(pomodoroRepositoryImp: PomodoroRepositoryImp): PomodoroRepository
+
+    @Binds
+    fun bindsRunningScheduleRepository(runningSchedulerRepoImpl: RunningSchedulerRepoImpl): RunningSchedulerRepo
+}
